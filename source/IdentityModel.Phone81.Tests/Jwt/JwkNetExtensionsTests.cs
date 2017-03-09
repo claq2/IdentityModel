@@ -35,6 +35,9 @@ namespace IdentityModel.Phone81.Tests.Jwt
             Assert.That(jwt.Kid.Length, Is.EqualTo(32));
             var e = Base64Url.Decode(jwt.E);
             Assert.That(e.Length, Is.EqualTo(3)); // Always 65537, which needs 3 bytes (2^16 + 1)
+            Assert.That(e[0], Is.EqualTo(1)); // 1 x 2^0 = 1
+            Assert.That(e[1], Is.EqualTo(0)); // 0 x 2^8 = 0
+            Assert.That(e[2], Is.EqualTo(1)); // 1 x 2^16 = 65536
             var n = Base64Url.Decode(jwt.N);
             Assert.That(n.Length, Is.EqualTo(key.KeySize / 8)); // KeySize is in bits, so / 8 for bytes
             Assert.That(jwt.Kty, Is.EqualTo("RSA"));
