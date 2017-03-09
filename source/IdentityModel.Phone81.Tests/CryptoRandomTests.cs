@@ -21,8 +21,9 @@ namespace IdentityModel.Phone81.Tests
         [Test]
         public void CanSpecifyLengthForCreateUniqueId()
         {
-            var x = CryptoRandom.CreateUniqueId(1);
-            Assert.That(x.Length, Is.EqualTo(2));
+            var lengthInBytes = 1;
+            var x = CryptoRandom.CreateUniqueId(lengthInBytes);
+            Assert.That(x.Length, Is.EqualTo(lengthInBytes * 2)); // Output is hex, so 2 characters for each byte
         }
     }
 }
