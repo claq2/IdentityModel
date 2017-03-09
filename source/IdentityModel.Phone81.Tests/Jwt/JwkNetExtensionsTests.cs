@@ -27,16 +27,36 @@ namespace IdentityModel.Phone81.Tests.Jwt
         }
 
         [Test]
-        public void CanConvertKeyToJwkWithPublicParameters()
+        public void CanConvertKeyToJwkWithPublicParametersAndDefaultValues()
         {
             var key = JwkNetExtensions.CreateKey();
             var jwt = key.ToJsonWebKey();
             Assert.That(jwt.HasPrivateKey, Is.False);
             Assert.That(jwt.Kid.Length, Is.EqualTo(32));
             var e = Base64Url.Decode(jwt.E);
-            Assert.That(e.Length, Is.EqualTo(3));
+            Assert.That(e.Length, Is.EqualTo(3)); // Always 65537, which needs 3 bytes (2^16 + 1)
             var n = Base64Url.Decode(jwt.N);
             Assert.That(n.Length, Is.EqualTo(key.KeySize / 8)); // KeySize is in bits, so / 8 for bytes
+            Assert.That(jwt.Kty, Is.EqualTo("RSA"));
+            Assert.That(jwt.Alg, Is.EqualTo("RS256"));
+        }
+
+        [Test]
+        public void CanSpecifyKeyId()
+        {
+            var keyId = "myKeyId";
+            var key = JwkNetExtensions.CreateKey();
+            var jwt = key.ToJsonWebKey(kid: keyId);
+            Assert.That(jwt.Kid, Is.EqualTo(keyId));
+        }
+
+        [Test]
+        public void CanSpecifyAlgorithm()
+        {
+            var alg = "RS512";
+            var key = JwkNetExtensions.CreateKey();
+            var jwt = key.ToJsonWebKey(alg);
+            Assert.That(jwt.Alg, Is.EqualTo(alg));
         }
     }
 }
